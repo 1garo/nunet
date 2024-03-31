@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 
 	pb "github.com/1garo/nunet/pb" // Import your protobuf generated code
 	"github.com/joho/godotenv"
@@ -27,19 +28,29 @@ func (s *server) DeployJob(ctx context.Context, req *pb.JobRequest) (*pb.JobResp
 
 	portStr := os.Getenv("GRPC_PORT")
 	if portStr == "" {
-		log.Fatal("GRPC_PORT environment variable not set")
+		return nil, fmt.Errorf("GRPC_PORT environment variable not set")
 	}
 	fmt.Printf("port: %s\n", portStr)
 	fmt.Printf("processing request (%s): %+v\n", req.ProgramName, req.Arguments)
-	if !req.Replicated {
-		req.Replicated = true
-		return deployJobOnOtherContainer(req, targetAddr)
-	} else {
-		return &pb.JobResponse{Status: "200"}, nil
+	out, err := exec.Command(req.ProgramName, req.Arguments...).Output()
+	if err != nil {
+
+		fmt.Printf("could not run job: %s\n", err.Error())
+		return nil, err
 	}
+
+	fmt.Println(string(out))
+	//if !req.Replicated {
+	//	req.Replicated = true
+	//	return deployJobOnOtherContainer(req, targetAddr)
+	//} else {
+	return &pb.JobResponse{Deployed: true}, nil
+	//}
 }
 
 var CLIENT_NAME string
+
+var DefaultClient = "localhost"
 
 func main() {
 	//env := os.Getenv("ENV")
@@ -59,7 +70,7 @@ func main() {
 
 	CLIENT_NAME = os.Getenv("CLIENT_NAME")
 	if CLIENT_NAME == "" {
-		log.Fatal("CLIENT_NAME environment variable not set")
+		CLIENT_NAME = DefaultClient
 	}
 
 	lis, err := net.Listen("tcp", ":"+portStr)
@@ -82,5 +93,6 @@ func deployJobOnOtherContainer(req *pb.JobRequest, targetAddr string) (*pb.JobRe
 	}
 	defer conn.Close()
 	client := pb.NewDeployerClient(conn)
+	// In this case we don't care to handle errors, we are just propagating the job
 	return client.DeployJob(context.Background(), req)
 }
