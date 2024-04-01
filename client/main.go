@@ -36,6 +36,7 @@ func main() {
 		ProgramName: *programName,
 		Replicated:  false,
 	})
+
 	if err != nil {
 		log.Fatalf("could not get deployed status: %v", err)
 	}
