@@ -69,6 +69,7 @@ func TestDeployJob(t *testing.T) {
 			//nil,
 			true,
 		},
+		// TODO: test the error messages
 		//{
 		//	&pb.JobRequest{
 		//		Arguments:   []string{"l"},
