@@ -21,7 +21,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o main ./server/main.go
+RUN go build -o main ./server
 
 # Expose port range of 50051-50052 to the outside world
 EXPOSE 50051-50052

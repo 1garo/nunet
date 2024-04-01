@@ -1,8 +1,8 @@
-build-s:
-	@go build -o nu-server ./server/main.go
+svr:
+	@go build -o svr ./server
 
-build-c:
-	@go build -o nu-client ./client/main.go
+cli:
+	@go build -o cli ./client/main.go
 
 deps:
 	@go mod tidy
@@ -16,5 +16,11 @@ up:
 
 down:
 	@docker compose down --remove-orphans
+
+test:
+	@go test ./...
+
+testv:
+	@go test -v ./...
 
 
