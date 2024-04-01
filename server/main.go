@@ -10,11 +10,6 @@ import (
 )
 
 func main() {
-	//env := os.Getenv("ENV")
-	//if env == "" {
-	//	log.Fatal("ENV environment variable not set")
-	//}
-	//err := godotenv.Load(env)
 	err := config.NewConfig()
 	if err != nil {
 		log.Fatal("Error loading .env file")

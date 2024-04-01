@@ -56,7 +56,7 @@ func TestDeployJob(t *testing.T) {
 	testCases := []struct {
 		input    *pb.JobRequest
 		deployed bool
-		code codes.Code
+		code     codes.Code
 	}{
 		{
 			input: &pb.JobRequest{
@@ -73,24 +73,22 @@ func TestDeployJob(t *testing.T) {
 				Replicated:  false,
 			},
 			deployed: false,
-			code: codes.InvalidArgument,
+			code:     codes.InvalidArgument,
 		},
 	}
 
 	for _, tt := range testCases {
-		t.Run("test", func(t *testing.T) {
-			ctx := context.Background()
-			r, err := c.DeployJob(ctx, tt.input)
+		ctx := context.Background()
+		r, err := c.DeployJob(ctx, tt.input)
 
-			if err != nil {
-				if e, ok := status.FromError(err); ok {
-					assert.Equal(t, tt.code, e.Code())
-				} else {
-					t.Errorf("not able to parse error returned %v", err)
-				}
+		if err != nil {
+			if e, ok := status.FromError(err); ok {
+				assert.Equal(t, tt.code, e.Code())
 			} else {
-				assert.Equal(t, tt.deployed, r.Deployed)
+				t.Errorf("not able to parse error returned %v", err)
 			}
-		})
+		} else {
+			assert.Equal(t, tt.deployed, r.Deployed)
+		}
 	}
 }
