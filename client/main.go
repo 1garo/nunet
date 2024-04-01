@@ -40,5 +40,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not get deployed status: %v", err)
 	}
-	log.Printf("Deployed : %t\n", r.Deployed)
+	log.Printf("Deployed: %t\n", r.Deployed)
 }
